@@ -54,7 +54,7 @@
 		<aside>
 			<p>
 				Copyright © {new Date().getFullYear()} - aadritraj. Source-available under MIT
-				<a class="link-hover link link-primary" href="">here</a>
+				<a class="link-hover link link-primary" href="https://github.com/aadritraj/hookbox/" target="_blank">here</a>
 			</p>
 		</aside>
 	</footer>
