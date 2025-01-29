@@ -62,7 +62,7 @@
 			<span use:relativeTime={{ date: lastUpdate, locale: "en" }}></span>
 		</p>
 		<textarea
-			class="prose w-[66%] max-w-72 max-h-72 min-h-24 rounded-btn font-mono"
+			class="textarea textarea-primary prose w-[66%] max-w-72 max-h-72 min-h-24 rounded-btn font-mono"
 			placeholder="what will you send?"
 			maxlength={maxLength}
 			bind:value={message}
