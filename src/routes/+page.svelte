@@ -1,28 +1,48 @@
 <script lang="ts">
-	import { relativeTime } from 'svelte-relative-time';
+	import { relativeTime } from "svelte-relative-time";
 
-	let message = $state('');
-	let status = $state('all good');
+	let message = $state("");
+	let status = $state("all good");
 	let lastUpdate = $state(new Date());
+	// this is enforced in the api,
+	// if you were to change this change that there too
 	let maxLength = 280;
 
-	let rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-
 	const dispatchMessage = async () => {
-		let response = await fetch('/api/messages', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ message: message })
-		});
-
-		message = '';
 		lastUpdate = new Date();
 
-		response.status == 200
-			? (status = 'previous message sent')
-			: (status = 'previous message failed to send');
+		if (message.length == 0) {
+			status = "message is empty";
+			return;
+		}
+
+		if (message.length > maxLength) {
+			status = "message is too long";
+			return;
+		}
+
+		try {
+			let response = await fetch("/api/messages", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ message: message })
+			});
+
+			if (!response.ok) {
+				throw new Error("failed to send message");
+			}
+
+			let { statusText } = await response.json();
+
+			message = "";
+
+			status == statusText;
+		} catch (error) {
+			status = "last request failed!";
+			console.error(error);
+		}
 	};
 </script>
 
@@ -39,10 +59,10 @@
 		</p>
 		<p class="text-center">
 			status: {status}<br />last update:
-			<span use:relativeTime={{ date: lastUpdate, locale: 'en' }}></span>
+			<span use:relativeTime={{ date: lastUpdate, locale: "en" }}></span>
 		</p>
 		<textarea
-			class="prose w-[66%] max-w-72 rounded-btn font-mono"
+			class="prose w-[66%] max-w-72 max-h-72 min-h-24 rounded-btn font-mono"
 			placeholder="what will you send?"
 			maxlength={maxLength}
 			bind:value={message}
@@ -54,7 +74,11 @@
 		<aside>
 			<p>
 				Copyright © {new Date().getFullYear()} - aadritraj. Source-available under MIT
-				<a class="link-hover link link-primary" href="https://github.com/aadritraj/hookbox/" target="_blank">here</a>
+				<a
+					class="link-hover link link-primary"
+					href="https://github.com/aadritraj/hookbox/"
+					target="_blank">here</a
+				>
 			</p>
 		</aside>
 	</footer>
